@@ -109,7 +109,10 @@ function Page() {
           <button className="text-2xl w-1/5 ml-4" onClick={fetchEnsNames}><IoIosSearch /></button>
         </div>
         <div className='h-[66vh] overflow-y-scroll mt-2 px-4'>
-          {ensNames.length === 0?<div>Please input the address or the addrees does not have any ENS.</div>:
+          {loading?    <div className="flex items-center justify-center">
+      <div className="w-16 h-16 border-t-4 border-b-4 border-blue-500 rounded-full animate-spin"></div>
+    </div>:
+          ensNames.length === 0?<div>Please input the address or the addrees does not have any ENS.</div>:
           <>
             {ensNames.map((name, index) => 
               <PriceCard key={name} countPrice={countPrice} ensName={name} shibObj={shibNames[index]} coreObj={coreNames[index]}></PriceCard>
