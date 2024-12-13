@@ -17,7 +17,7 @@ import Divider from '@mui/material/Divider';
 import PriceCard from './PriceCard';
 
 function Page() {
-    const [address, setAddress] = useState('0x5Ee4a6eeD1d42605526Fc3f75f0F791e465AB47B');
+    const [address, setAddress] = useState('');
     const [ensNames, setEnsNames] = useState([]);
     const [shibNames, setShibNames] = useState([]);
     const [coreNames, setCoreNames] = useState([]);
