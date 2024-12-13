@@ -14,104 +14,55 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
-import ShibIcon from './svgs/shib';
 
-function PriceCard() {
-    const [address, setAddress] = useState('0x5Ee4a6eeD1d42605526Fc3f75f0F791e465AB47B');
-    const [ensNames, setEnsNames] = useState([]);
-    const [error, setError] = useState(null);
-    const [loading, setLoading] = useState(false);
-  
-    const fetchEnsNames = async () => {
-      setLoading(true);
-      setError(null);
-      setEnsNames([]);
-  
-      try {
-        const apiKey = process.env.REACT_APP_API_KEY;
-        const response = await axios.get(`https://api.opensea.io/api/v2/chain/ethereum/account/${address}/nfts`, {
-          headers: {
-            'Accept': 'application/json',
-            'X-API-KEY': apiKey,
-          },
-        });
-        console.log("response", response)
-        const assets = response.data.nfts;
-        const ensDomains = assets
-          .filter(asset => asset.name && asset.name.endsWith('.eth'))
-          .map(asset => asset.name);
-        console.log("ensDomains", ensDomains)
-        setEnsNames(ensDomains);
-      } catch (err) {
-        console.error(err);
-        setError('Failed to fetch ENS names. Please check the address and try again.');
-      } finally {
-        setLoading(false);
-      }
-    };
-  
-    const fetchD3TokenDetail = async(chain, name) => {
-        console.log("chain", chain)
-        try {
-            const apiKey = process.env.REACT_APP_D3_API_KEY;
-            const response = await axios.get(`https://api-public.d3.app/v1/partner/search?limit=25&skip=0&tld=${chain}&sld=${name}`, {
-              headers: {
-                'Accept': 'application/json',
-                'Api-Key': apiKey,
-              },
-            });
-            console.log("response", response)
-            // const assets = response.data.nfts;
-            // const ensDomains = assets
-            //   .filter(asset => asset.name && asset.name.endsWith('.eth'))
-            //   .map(asset => asset.name);
-            // console.log("ensDomains", ensDomains)
-          } catch (err) {
-            console.error(err);
-            setError('Failed to fetch ENS names. Please check the address and try again.');
-          } finally {
-            setLoading(false);
-          }
-    }
-    // From here
-    const searchENS = () => {
-
-    }
+function PriceCard({ensName, shibObj, coreObj, countPrice}) {
+  const [selectShib, setSelectShib] = useState(false);
+  const [selectCore, setSelectCore] = useState(false);
 
   return (
         <Card className='w-full h-[170px] mb-8 mt-4'>
           <CardContent>
             <Typography variant="h6" component="div">
-              eth.eth
+              {ensName}
             </Typography>
             <Divider  />
             <div className='grid grid-flow-row-dense grid-cols-5 gap-2 grid-rows-1 mt-4'>
               <div className="text-lg col-span-3">
-                eth.core
+                {shibObj.sld}.{shibObj.tld}
               </div>
               <div>
                 <div className="text-sm">
-                  7.1234 CORE
+                  {Math.trunc(shibObj.nativeAmount)} {shibObj.nativeCurrency}
                 </div>            
                 <div className="text-sm">
-                  $10/yr
+                  ${Math.trunc(shibObj.usdPrice)}/yr
                 </div>             
               </div>
-              <button className='bg-green-300 px-2 mx-2 rounded'>Cart</button> 
+              {shibObj.status ==="reserved"? 
+                <button className='bg-gray-300 px-2 mx-2 rounded cursor-not-allowed w-20' disabled>Reserved</button>:
+                selectShib?
+                <button className='bg-green-700 px-2 mx-2 rounded w-20' onClick={()=>{setSelectShib(!selectShib);countPrice(-shibObj.usdPrice)}}>Remove</button> :
+                <button className='bg-green-300 px-2 mx-2 rounded w-20' onClick={()=>{setSelectShib(!selectShib);countPrice(shibObj.usdPrice)}}>Add</button>  
+              }
             </div>
             <div className='grid grid-flow-row-dense grid-cols-5 gap-2 grid-rows-1 mt-4'>
               <div className="text-lg col-span-3">
-                easadasdasth.core
+              {coreObj.sld}.{coreObj.tld}
               </div>
               <div>
                 <div className="text-sm">
-                  7.1234 CORE
+                {Math.trunc(coreObj.nativeAmount)} {coreObj.nativeCurrency}
                 </div>            
                 <div className="text-sm">
-                  $10/yr
+                ${Math.trunc(coreObj.usdPrice)}/yr
                 </div>             
               </div>
-              <button className='bg-green-300 px-2 mx-2 rounded'>Cart</button> 
+              {coreObj.status ==="reserved"? 
+                <button className='bg-gray-300 px-2 mx-2 rounded cursor-not-allowed w-20' disabled>Reserved</button>:
+                selectCore?
+                <button className='bg-green-700 px-2 mx-2 rounded w-20' onClick={()=>{setSelectCore(!selectCore);countPrice(-coreObj.usdPrice)}}>Remove</button> :
+                <button className='bg-green-300 px-2 mx-2 rounded w-20' onClick={()=>{setSelectCore(!selectCore);countPrice(coreObj.usdPrice)}}>Add</button>  
+              }
             </div>
             <div>
 
