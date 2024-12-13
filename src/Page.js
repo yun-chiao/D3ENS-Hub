@@ -30,6 +30,7 @@ function Page() {
     };
 
     const fetchEnsNames = async () => {
+      setPrice(0)
       setLoading(true);
       setError(null);
       setEnsNames([]);
